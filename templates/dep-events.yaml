@@ -1,0 +1,28 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-events
+  labels:
+    app: {{ .Chart.Name }}-events
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-events
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-events
+    spec:
+      containers:
+        - name: events
+          image: us.gcr.io/corp-202415/taiga_events
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          env:
+          - name: TAIGA_RABBITMQ
+            value: {{ .Chart.Name }}-rabbitmq

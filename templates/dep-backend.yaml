@@ -1,0 +1,78 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-backend
+  labels:
+    app: {{ .Chart.Name }}-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-backend
+    spec:
+      initContainers:
+        - name: init-backend
+          image: gcr.io/google-containers/busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /taiga_backend/media']
+          volumeMounts:
+            - name: taiga-backend-media
+              mountPath: /taiga_backend/media
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: backend
+          image: us.gcr.io/corp-202415/taiga_backend
+          imagePullPolicy: Always
+          command: ['/scripts/entrypoint.sh']
+          args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          env:
+          - name: TAIGA_BACKEND
+            value: {{ .Chart.Name }}-backend
+          - name: TAIGA_FRONTEND
+            value: {{ .Chart.Name }}-frontend
+          - name: TAIGA_REDIS
+            value: {{ .Chart.Name }}-redis
+          - name: TAIGA_RABBITMQ
+            value: {{ .Chart.Name }}-rabbitmq
+          - name: TAIGA_POSTGRESQL
+            value: {{ .Chart.Name }}-postgresql
+          - name: DJANGO_ALLOWED_HOSTS
+            value: {{ .Values.TAIGA_HOSTNAME }}
+          - name: TAIGA_API_URL
+            value: https://{{ .Values.TAIGA_HOSTNAME }}/api/v1/
+          - name: TAIGA_EVENTS_URL
+            value: wss://{{ .Values.TAIGA_HOSTNAME }}/events
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          volumeMounts:
+            - name: taiga-backend-media
+              mountPath: /taiga_backend/media
+      volumes:
+        - name: taiga-backend-media
+          persistentVolumeClaim:
+            claimName: pv-taiga-backend
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-taiga-backend
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: default
+    #helm.sh/resource-policy: keep
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi

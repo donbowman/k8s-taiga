@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-frontend
+  labels:
+    app: {{ .Chart.Name }}-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: us.gcr.io/corp-202415/taiga_frontend
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          env:
+          - name: TAIGA_BACKEND
+            value: {{ .Chart.Name }}-backend
+          - name: TAIGA_EVENTS
+            value: {{ .Chart.Name }}-backend
+          - name: TAIGA_API_URL
+            value: https://{{ .Values.TAIGA_HOSTNAME }}/api/v1/
+          - name: TAIGA_EVENTS_URL
+            value: wss://{{ .Values.TAIGA_HOSTNAME }}/events
+          ports:
+            - name: http
+              containerPort: 8888
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name: taiga-backend-media
+              mountPath: /taiga_backend/media
+              readOnly: true
+      volumes:
+        - name: taiga-backend-media
+          persistentVolumeClaim:
+            claimName: pv-taiga-backend

@@ -1,0 +1,31 @@
+#https://github.com/GoogleCloudPlatform/redis-docker/tree/master/4
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-redis
+  labels:
+    app: {{ .Chart.Name }}-redis
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-redis
+    spec:
+      containers:
+        - name: redis
+          image: launcher.gcr.io/google/redis4
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          resources:
+            limits:
+              cpu: 50m
+            requests:
+              cpu: 10m

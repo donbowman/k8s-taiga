@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-celeryworker
+  labels:
+    app: {{ .Chart.Name }}-celeryworker
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-celeryworker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-celeryworker
+    spec:
+      containers:
+        - name: celeryworker
+          image: us.gcr.io/corp-202415/taiga_celeryworker
+          imagePullPolicy: Always
+          entrypoint: []
+          command: ['celery', '-A', 'taiga', 'worker', '-P', 'gevent', '-c', '4', '--loglevel', 'info']
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          env:
+          - name: TAIGA_BACKEND
+            value: {{ .Chart.Name }}-backend
+          - name: TAIGA_FRONTEND
+            value: {{ .Chart.Name }}-frontend
+          - name: TAIGA_REDIS
+            value: {{ .Chart.Name }}-redis
+          - name: TAIGA_RABBITMQ
+            value: {{ .Chart.Name }}-rabbitmq
+          - name: TAIGA_POSTGRESQL
+            value: {{ .Chart.Name }}-postgresql

@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-frontend
+  labels:
+    app: {{ .Chart.Name }}-frontend
+spec:
+  ports:
+    - port: 8888
+      targetPort: 8888
+      name: http
+  selector:
+    app: {{ .Chart.Name }}-frontend
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-backend
+  labels:
+    app: {{ .Chart.Name }}-backend
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+  selector:
+    app: {{ .Chart.Name }}-backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-rabbitmq
+  labels:
+    app: taiga
+spec:
+  ports:
+    - port: 5671
+      name: rabbitmq-tls
+    - port: 5672
+      name: rabbitmq
+    - port: 25672
+      name: rabbitmq-internode
+    - port: 4369
+      name: rabbitmq-epmd
+  selector:
+    app: {{ .Chart.Name }}-backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-events
+  labels:
+    app: taiga
+spec:
+  ports:
+    - port: 8888
+      targetPort: 8888
+      name: http
+  selector:
+    app: {{ .Chart.Name }}-events
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-redis
+  labels:
+    app: taiga
+spec:
+  ports:
+    - port: 6379
+      name: redis
+  selector:
+    app: {{ .Chart.Name }}-redis
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-postgresql
+  labels:
+    app: taiga
+spec:
+  ports:
+    - port: 5432
+      name: postgresql
+  selector:
+    app: {{ .Chart.Name }}-postgresql
+

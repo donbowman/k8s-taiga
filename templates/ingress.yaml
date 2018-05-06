@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.org/websocket-services: "{{ .Chart.Name }}-events"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: {{ .Chart.Name }}-ingress
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  rules:
+    - host:  {{ .Values.TAIGA_HOSTNAME }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ .Chart.Name }}-frontend
+              servicePort: 8888
+          - path: /api
+            backend:
+              serviceName: {{ .Chart.Name }}-backend
+              servicePort: 8000
+          - path: /events
+            backend:
+              serviceName: {{ .Chart.Name }}-events
+              servicePort: 8888
+
+  tls:
+      - hosts:
+          - {{ .Values.TAIGA_HOSTNAME }}
+        secretName: {{ .Values.TAIGA_HOSTNAME }}-tls
+
+

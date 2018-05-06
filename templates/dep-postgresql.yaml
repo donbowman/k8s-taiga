@@ -1,0 +1,49 @@
+#https://github.com/GoogleCloudPlatform/postgresql-docker/tree/master/10
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-postgresql
+  labels:
+    app: {{ .Chart.Name }}-postgresql
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-postgresql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-postgresql
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-postgresql
+          image: launcher.gcr.io/google/postgresql10
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          volumeMounts:
+            - name: taiga-postgresql-data
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+      volumes:
+        - name: taiga-postgresql-data
+          persistentVolumeClaim:
+            claimName: pv-taiga-postgresql
+
+---
+"helm.sh/resource-policy": keep
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-taiga-postgresql
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: default
+    #helm.sh/resource-policy: keep
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
