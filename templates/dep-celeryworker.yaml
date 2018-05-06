@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: celeryworker
-          image: us.gcr.io/corp-202415/taiga_celeryworker
+          image: agilicus/taiga_celeryworker
           imagePullPolicy: Always
           entrypoint: []
           command: ['celery', '-A', 'taiga', 'worker', '-P', 'gevent', '-c', '4', '--loglevel', 'info']

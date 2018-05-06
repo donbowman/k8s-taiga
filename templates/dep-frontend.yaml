@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: us.gcr.io/corp-202415/taiga_frontend
+          image: agilicus/taiga_frontend
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

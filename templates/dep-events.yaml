@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: events
-          image: us.gcr.io/corp-202415/taiga_events
+          image: agilicus/taiga_events
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

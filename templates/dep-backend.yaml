@@ -27,7 +27,7 @@ spec:
             runAsUser: 0
       containers:
         - name: backend
-          image: us.gcr.io/corp-202415/taiga_backend
+          image: agilicus/taiga_backend
           imagePullPolicy: Always
           command: ['/scripts/entrypoint.sh']
           args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
