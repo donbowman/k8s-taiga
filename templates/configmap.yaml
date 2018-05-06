@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Chart.Name }}-configmap
+  name: {{ .Release.Name }}-configmap
 data:
   C_FORCE_ROOT: '{{ .Values.C_FORCE_ROOT }}'
   DJANGO_ALLOWED_HOSTS: '{{ .Values.DJANGO_ALLOWED_HOSTS }}'

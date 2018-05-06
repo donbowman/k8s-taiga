@@ -2,20 +2,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-redis
+  name: {{ .Release.Name }}-redis
   labels:
-    app: {{ .Chart.Name }}-redis
+    app: {{ .Release.Name }}-redis
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-redis
+      app: {{ .Release.Name }}-redis
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-redis
+        app: {{ .Release.Name }}-redis
     spec:
       containers:
         - name: redis
@@ -23,9 +23,12 @@ spec:
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           resources:
             limits:
-              cpu: 50m
+              cpu: 500m
             requests:
-              cpu: 10m
+              cpu: 50m
+          ports:
+            - name: redis
+              containerPort: 6379

@@ -1,20 +1,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-backend
+  name: {{ .Release.Name }}-backend
   labels:
-    app: {{ .Chart.Name }}-backend
+    app: {{ .Release.Name }}-backend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-backend
+      app: {{ .Release.Name }}-backend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-backend
+        app: {{ .Release.Name }}-backend
     spec:
       initContainers:
         - name: init-backend
@@ -30,21 +30,22 @@ spec:
           image: agilicus/taiga_backend
           imagePullPolicy: Always
           command: ['/scripts/entrypoint.sh']
-          args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
+#          args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
+          args: [ 'python3', 'manage.py', 'runserver', '0:8000' ]
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           env:
           - name: TAIGA_BACKEND
-            value: {{ .Chart.Name }}-backend
+            value: {{ .Release.Name }}-backend
           - name: TAIGA_FRONTEND
-            value: {{ .Chart.Name }}-frontend
+            value: {{ .Release.Name }}-frontend
           - name: TAIGA_REDIS
-            value: {{ .Chart.Name }}-redis
+            value: {{ .Release.Name }}-redis
           - name: TAIGA_RABBITMQ
-            value: {{ .Chart.Name }}-rabbitmq
+            value: {{ .Release.Name }}-rabbitmq
           - name: TAIGA_POSTGRESQL
-            value: {{ .Chart.Name }}-postgresql
+            value: {{ .Release.Name }}-postgresql
           - name: DJANGO_ALLOWED_HOSTS
             value: {{ .Values.TAIGA_HOSTNAME }}
           - name: TAIGA_API_URL

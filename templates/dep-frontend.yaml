@@ -1,20 +1,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-frontend
+  name: {{ .Release.Name }}-frontend
   labels:
-    app: {{ .Chart.Name }}-frontend
+    app: {{ .Release.Name }}-frontend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-frontend
+      app: {{ .Release.Name }}-frontend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-frontend
+        app: {{ .Release.Name }}-frontend
     spec:
       containers:
         - name: frontend
@@ -22,12 +22,12 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           env:
           - name: TAIGA_BACKEND
-            value: {{ .Chart.Name }}-backend
+            value: {{ .Release.Name }}-backend
           - name: TAIGA_EVENTS
-            value: {{ .Chart.Name }}-backend
+            value: {{ .Release.Name }}-backend
           - name: TAIGA_API_URL
             value: https://{{ .Values.TAIGA_HOSTNAME }}/api/v1/
           - name: TAIGA_EVENTS_URL

@@ -1,20 +1,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-celeryworker
+  name: {{ .Release.Name }}-celeryworker
   labels:
-    app: {{ .Chart.Name }}-celeryworker
+    app: {{ .Release.Name }}-celeryworker
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-celeryworker
+      app: {{ .Release.Name }}-celeryworker
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-celeryworker
+        app: {{ .Release.Name }}-celeryworker
     spec:
       containers:
         - name: celeryworker
@@ -24,15 +24,15 @@ spec:
           command: ['celery', '-A', 'taiga', 'worker', '-P', 'gevent', '-c', '4', '--loglevel', 'info']
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           env:
           - name: TAIGA_BACKEND
-            value: {{ .Chart.Name }}-backend
+            value: {{ .Release.Name }}-backend
           - name: TAIGA_FRONTEND
-            value: {{ .Chart.Name }}-frontend
+            value: {{ .Release.Name }}-frontend
           - name: TAIGA_REDIS
-            value: {{ .Chart.Name }}-redis
+            value: {{ .Release.Name }}-redis
           - name: TAIGA_RABBITMQ
-            value: {{ .Chart.Name }}-rabbitmq
+            value: {{ .Release.Name }}-rabbitmq
           - name: TAIGA_POSTGRESQL
-            value: {{ .Chart.Name }}-postgresql
+            value: {{ .Release.Name }}-postgresql

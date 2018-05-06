@@ -2,20 +2,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-rabbitmq
+  name: {{ .Release.Name }}-rabbitmq
   labels:
-    app: {{ .Chart.Name }}-rabbitmq
+    app: {{ .Release.Name }}-rabbitmq
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-rabbitmq
+      app: {{ .Release.Name }}-rabbitmq
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-rabbitmq
+        app: {{ .Release.Name }}-rabbitmq
     spec:
       containers:
         - name: rabbitmq
@@ -23,9 +23,8 @@ spec:
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
-          resources:
-            limits:
-              cpu: 50m
-            requests:
-              cpu: 10m
+                name: {{ .Release.Name }}-configmap
+          ports:
+            - name: rabbitmq
+              containerPort: 5672
+              protocol: TCP

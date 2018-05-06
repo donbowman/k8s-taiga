@@ -1,91 +1,88 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-frontend
+  name: {{ .Release.Name }}-frontend
   labels:
-    app: {{ .Chart.Name }}-frontend
+    app: {{ .Release.Name }}-frontend
 spec:
   ports:
     - port: 8888
       targetPort: 8888
       name: http
   selector:
-    app: {{ .Chart.Name }}-frontend
+    app: {{ .Release.Name }}-frontend
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-backend
+  name: {{ .Release.Name }}-backend
   labels:
-    app: {{ .Chart.Name }}-backend
+    app: {{ .Release.Name }}-backend
 spec:
   ports:
     - port: 8000
       targetPort: 8000
       name: http
   selector:
-    app: {{ .Chart.Name }}-backend
+    app: {{ .Release.Name }}-backend
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-rabbitmq
+  name: {{ .Release.Name }}-rabbitmq
   labels:
-    app: taiga
+    app: {{ .Release.Name }}-rabbitmq
 spec:
   ports:
-    - port: 5671
-      name: rabbitmq-tls
     - port: 5672
+      targetPort: 5672
       name: rabbitmq
-    - port: 25672
-      name: rabbitmq-internode
-    - port: 4369
-      name: rabbitmq-epmd
   selector:
-    app: {{ .Chart.Name }}-backend
+    app: {{ .Release.Name }}-rabbitmq
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-events
+  name: {{ .Release.Name }}-events
   labels:
-    app: taiga
+    app: {{ .Release.Name }}-events
 spec:
   ports:
     - port: 8888
       targetPort: 8888
       name: http
   selector:
-    app: {{ .Chart.Name }}-events
+    app: {{ .Release.Name }}-events
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-redis
+  name: {{ .Release.Name }}-redis
   labels:
-    app: taiga
+    app: {{ .Release.Name }}-redis
 spec:
   ports:
     - port: 6379
+      targetPort: 6379
       name: redis
   selector:
-    app: {{ .Chart.Name }}-redis
+    app: {{ .Release.Name }}-redis
 
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-postgresql
+  name: {{ .Release.Name }}-postgresql
   labels:
-    app: taiga
+    app: {{ .Release.Name }}-postgresql
 spec:
   ports:
     - port: 5432
+      targetPort: 5432
       name: postgresql
   selector:
-    app: {{ .Chart.Name }}-postgresql
+    app: {{ .Release.Name }}-postgresql
 

@@ -2,28 +2,28 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-postgresql
+  name: {{ .Release.Name }}-postgresql
   labels:
-    app: {{ .Chart.Name }}-postgresql
+    app: {{ .Release.Name }}-postgresql
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-postgresql
+      app: {{ .Release.Name }}-postgresql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-postgresql
+        app: {{ .Release.Name }}-postgresql
     spec:
       containers:
-        - name: {{ .Chart.Name }}-postgresql
+        - name: {{ .Release.Name }}-postgresql
           image: launcher.gcr.io/google/postgresql10
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           volumeMounts:
             - name: taiga-postgresql-data
               mountPath: /var/lib/postgresql/data
@@ -34,7 +34,7 @@ spec:
             claimName: pv-taiga-postgresql
 
 ---
-"helm.sh/resource-policy": keep
+#"helm.sh/resource-policy": keep
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

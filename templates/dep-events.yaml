@@ -1,20 +1,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-events
+  name: {{ .Release.Name }}-events
   labels:
-    app: {{ .Chart.Name }}-events
+    app: {{ .Release.Name }}-events
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-events
+      app: {{ .Release.Name }}-events
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-events
+        app: {{ .Release.Name }}-events
     spec:
       containers:
         - name: events
@@ -22,7 +22,10 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: {{ .Chart.Name }}-configmap
+                name: {{ .Release.Name }}-configmap
           env:
           - name: TAIGA_RABBITMQ
-            value: {{ .Chart.Name }}-rabbitmq
+            value: {{ .Release.Name }}-rabbitmq
+          ports:
+            - name: http
+              containerPort: 8888
