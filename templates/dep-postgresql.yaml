@@ -31,6 +31,9 @@ spec:
       volumes:
         - name: taiga-postgresql-data
           persistentVolumeClaim:
+{{ if .Values.taiga_db_claim }}
+            claimName: .Values.taiga_db_claim
+{{ else }}
             claimName: pv-taiga-postgresql
 
 ---
@@ -47,3 +50,5 @@ spec:
   resources:
     requests:
       storage: 5Gi
+
+{{ end }}

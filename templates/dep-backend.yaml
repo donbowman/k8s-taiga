@@ -64,13 +64,24 @@ spec:
             - name: taiga-backup
               mountPath: /var/backups
       volumes:
-        - name: taiga-backend-media
-          persistentVolumeClaim:
-            claimName: pv-taiga-backend
         - name: taiga-backup
           persistentVolumeClaim:
+{{ if .Values.taiga_backup_claim }}
+            claimName: .Values.taiga_backup_claim
+{{ else }}
             claimName: pv-taiga-backup
+{{ end }}
 
+        - name: taiga-backend-media
+          persistentVolumeClaim:
+{{ if .Values.taiga_volume_claim }}
+            claimName: .Values.taiga_volume_claim
+{{ else }}
+            claimName: pv-taiga-backend
+{{ end }}
+
+{{ if .Values.taiga_volume_claim }}
+{{ else }}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -84,6 +95,10 @@ spec:
   resources:
     requests:
       storage: 5Gi
+{{ end }}
+
+{{ if .Values.taiga_backup_claim }}
+{{ else }}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -97,4 +112,4 @@ spec:
   resources:
     requests:
       storage: 5Gi
-
+{{ end }}
