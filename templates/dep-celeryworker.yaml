@@ -36,3 +36,5 @@ spec:
             value: {{ .Release.Name }}-rabbitmq
           - name: TAIGA_POSTGRESQL
             value: {{ .Release.Name }}-postgresql
+          - name: TAIGA_BACKUP_DIR
+            value: ""
