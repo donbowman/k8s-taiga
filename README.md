@@ -21,9 +21,9 @@ wish, you can manually create one or both volumes, and add them to the
 values.yaml as
 
 ```
-taiga-db-claim: pv-taiga-db-claim
-taiga-volume-claim: pv-taiga-volume-claim
-taiga-backup-claim: pv-taiga-backup-claim
+taiga_db_claim: pv-taiga-db-claim
+taiga_volume_claim: pv-taiga-volume-claim
+taiga_backup_claim: pv-taiga-backup-claim
 ```
 
 And you may wish to create them as:

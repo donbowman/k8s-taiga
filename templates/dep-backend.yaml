@@ -19,12 +19,13 @@ spec:
       initContainers:
         - name: init-backend
           image: gcr.io/google-containers/busybox
-          command: ['sh', '-c', 'chown -R 1000:1000 /taiga_backend/media /var/backups']
+          command: ['sh', '-c', 'mkdir -p /var/backups/taiga && chown -R 1000:1000 /taiga_backend/media /var/backups/taiga']
           volumeMounts:
             - name: taiga-backend-media
               mountPath: /taiga_backend/media
             - name: taiga-backup
-              mountPath: /var/backups
+              mountPath: /var/backups/taiga
+              subPath: taiga
           securityContext:
             runAsUser: 0
       containers:
@@ -62,12 +63,13 @@ spec:
             - name: taiga-backend-media
               mountPath: /taiga_backend/media
             - name: taiga-backup
-              mountPath: /var/backups
+              mountPath: /var/backups/taiga
+              subPath: taiga
       volumes:
         - name: taiga-backup
           persistentVolumeClaim:
 {{ if .Values.taiga_backup_claim }}
-            claimName: .Values.taiga_backup_claim
+            claimName: {{ .Values.taiga_backup_claim }}
 {{ else }}
             claimName: pv-taiga-backup
 {{ end }}
@@ -75,7 +77,7 @@ spec:
         - name: taiga-backend-media
           persistentVolumeClaim:
 {{ if .Values.taiga_volume_claim }}
-            claimName: .Values.taiga_volume_claim
+            claimName: {{ .Values.taiga_volume_claim }}
 {{ else }}
             claimName: pv-taiga-backend
 {{ end }}

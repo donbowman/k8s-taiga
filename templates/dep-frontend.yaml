@@ -52,7 +52,7 @@ spec:
         - name: taiga-backend-media
           persistentVolumeClaim:
 {{ if .Values.taiga_volume_claim }}
-            claimName: .Values.taiga_volume_claim
+            claimName: {{ .Values.taiga_volume_claim }}
 {{ else }}
             claimName: pv-taiga-backend
 {{ end }}
