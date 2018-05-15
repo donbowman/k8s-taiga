@@ -16,9 +16,11 @@ spec:
       labels:
         app: {{ .Release.Name }}-frontend
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: frontend
-          image: agilicus/taiga_frontend
+          image: cr.agilicus.com/corp-tools/taiga-container-build/taiga_frontend
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

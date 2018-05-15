@@ -16,9 +16,11 @@ spec:
       labels:
         app: {{ .Release.Name }}-celeryworker
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: celeryworker
-          image: agilicus/taiga_celeryworker
+          image: cr.agilicus.com/corp-tools/taiga-container-build/taiga_celeryworker
           imagePullPolicy: Always
           entrypoint: []
           command: ['celery', '-A', 'taiga', 'worker', '-P', 'gevent', '-c', '4', '--loglevel', 'info']

@@ -16,6 +16,9 @@ spec:
       labels:
         app: {{ .Release.Name }}-backend
     spec:
+      imagePullSecrets:
+        - name: regcred
+
       initContainers:
         - name: init-backend
           image: gcr.io/google-containers/busybox
@@ -30,7 +33,7 @@ spec:
             runAsUser: 0
       containers:
         - name: backend
-          image: agilicus/taiga_backend
+          image: cr.agilicus.com/corp-tools/taiga-container-build/taiga_backend
           imagePullPolicy: Always
           command: ['/scripts/entrypoint.sh']
           args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
